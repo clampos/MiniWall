@@ -8,21 +8,29 @@ const bcryptjs = require('bcryptjs')
 const jsonwebtoken = require('jsonwebtoken')
 
 router.post('/register', async(req,res) => {
+    console.log(req.body)
+
     // Authentication 1 to check user input
     const {error} = registerAuthentication(req.body)
     if(error){
         return res.status(400).send({message:error['details'][0]['message']})
     }
 
-    // Authentication 2 to check if user exists
-    const userExists = await User.findOne({email:req.body.email})
-    if(userExists) {
-        return res.status(400).send({message:'User already exists :('})
+    // Authentication 2 to check if user exists (username)
+    const userExists_1 = await User.findOne({username:req.body.username})
+    if(userExists_1) {
+        return res.status(400).send({message:'An account with the same username already exists'})
+    }
+
+    // Authentication 2 to check if user exists (email)
+    const userExists_2 = await User.findOne({email:req.body.email})
+    if(userExists_2) {
+        return res.status(400).send({message:'An account is already registered to this email address'})
     }
 
     // Creating a hashed representation of the password
     const salt = await bcryptjs.genSalt(5)
-    const hashedPassword = await bcryptjs.hash.apply(req.body.password, salt)
+    const hashedPassword = await bcryptjs.hash(req.body.password, salt)
 
     // Inserting data
     const user = new User({
