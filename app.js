@@ -7,6 +7,10 @@ require('dotenv/config')
 
 app.use(bodyParser.json())
 
+app.get('/', (req, res) => {
+    res.send('Welcome to MiniWall RESTful API')
+})
+
 // TO-DO routes
 const postsRoute = require('./routes/posts')
 const authRoute = require('./routes/auth')
