@@ -11,3 +11,9 @@ npm install express nodemon
 - bcryptjs for encryption/decryption
 - JWT for generating auth-tokens
 npm install mongoose dotenv body-parser joi bcryptjs jsonwebtoken
+
+// To-do:
+- Likes
+- Comments
+- Likes and comments restricted to 3rd persons
+- Update data models to link posts with likes and comments

@@ -1,3 +1,4 @@
+const { array } = require('joi')
 const mongoose = require('mongoose')
 
 const postSchema = mongoose.Schema({
@@ -12,6 +13,10 @@ const postSchema = mongoose.Schema({
     description:{
         type:String,
         max:280
+    },
+    likes:{
+        type:Number,
+        default:0
     },
     timestamp:{
         type:Date,
