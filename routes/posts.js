@@ -4,7 +4,7 @@ const router = express.Router()
 const Post = require('../models/Post')
 const verifyToken = require('../tokenVerification')
 
-// GET all
+// 1a: GET all
 // verifyToken protects posts data from unauthorised users
 router.get('/', verifyToken, async(req,res) => {
     try{
@@ -16,14 +16,23 @@ router.get('/', verifyToken, async(req,res) => {
     }
     })
 
+// 1b: GET by ID
+router.get('/:postId', verifyToken, async(req,res)=>{
+    try{
+        const getPostById = await Post.findById(req.params.postId)
+        res.send(getPostById)
+    }catch(err){
+        res.status(400).send({message:err})
+    }
+})
 
-// POST new post
-router.post('/newpost', verifyToken, async(req,res)=> {
+
+// 2: POST new post
+router.post('/', verifyToken, async(req,res)=> {
 // Inserting data
 const post = new Post({
     title:req.body.title,
-    // TO-DO: how to automatically attach a post to the logged in user
-    owner:req.body.owner,
+    owner:req.user._id,
     description:req.body.description
 })
 try {
@@ -34,7 +43,7 @@ try {
 }
 })
 
-// UPDATE/PATCH an existing post
+// 3: UPDATE/PATCH an existing post
 router.patch('/:postId', verifyToken, async(req,res)=>{
     try{
     const updatePostById = await Post.updateOne(
@@ -51,7 +60,7 @@ router.patch('/:postId', verifyToken, async(req,res)=>{
 }
 })
 
-// DELETE a post by postId
+// 4: DELETE a post by postId
 router.delete('/:postId', verifyToken, async(req,res)=>{
 try{
 const deletePostById = await Post.deleteOne(

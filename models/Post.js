@@ -1,4 +1,3 @@
-const { array } = require('joi')
 const mongoose = require('mongoose')
 
 const postSchema = mongoose.Schema({
@@ -14,7 +13,13 @@ const postSchema = mongoose.Schema({
         type:String,
         max:280
     },
+    comments:{
+        type:[]
+    },
     likes:{
+        type:[]
+    },
+    num_likes:{
         type:Number,
         default:0
     },
