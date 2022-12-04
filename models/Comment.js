@@ -8,8 +8,9 @@ const commentSchema = mongoose.Schema({
         type:String,
         max:280
     },
-    linked_post:{
-        type:String
+    postId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
     },
     timestamp:{
         type:Date,

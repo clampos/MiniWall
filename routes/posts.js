@@ -9,7 +9,7 @@ const verifyToken = require('../tokenVerification')
 router.get('/', verifyToken, async(req,res) => {
     try{
         // Await posts, sort by likes descending, then by chronological order if likes are equal
-        const posts = await Post.find().sort({likes:-1, timestamp:-1})
+        const posts = await Post.find().sort({timestamp:-1})
         res.send(posts)
     } catch(err) {
         res.status(400).send({message:err})
@@ -60,7 +60,17 @@ router.patch('/:postId', verifyToken, async(req,res)=>{
 }
 })
 
-// 4: DELETE a post by postId
+// 4a: DELETE all posts
+router.delete('/', verifyToken, async(req,res)=>{
+    try{
+    const posts = await Post.deleteMany()
+    res.send(posts)
+    }catch(err){
+    res.send({message:err})
+    }
+    })
+
+// 4b: DELETE a post by postId
 router.delete('/:postId', verifyToken, async(req,res)=>{
 try{
 const deletePostById = await Post.deleteOne(

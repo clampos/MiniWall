@@ -13,15 +13,30 @@ const postSchema = mongoose.Schema({
         type:String,
         max:280
     },
-    comments:{
-        type:[]
-    },
+    comments:[
+        {
+            owner:{
+                type:String
+            },
+            remark:{
+                type:String,
+                max:280
+            },
+            postId:{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Post'
+            },
+            timestamp:{
+                type:Date,
+                default:Date.now
+            }
+}],
+    
     likes:{
         type:[]
     },
     num_likes:{
-        type:Number,
-        default:0
+        type:Number
     },
     timestamp:{
         type:Date,
