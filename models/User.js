@@ -19,10 +19,14 @@ const userSchema = mongoose.Schema({
         min:6,
         max:1024
     },
+    posts:
+        [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
+    ,
     date:{
         type:Date,
-        default:Date.now
+        default: new Date()
     }
 })
 
-module.exports = mongoose.model('users', userSchema)
+const User = mongoose.model('User', userSchema)
+module.exports = User

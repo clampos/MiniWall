@@ -2,9 +2,10 @@ const express = require('express')
 const router = express.Router()
 
 const Post = require('../models/Post')
+const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// 1a: GET all
+// 1a: GET all posts
 // verifyToken protects posts data from unauthorised users
 router.get('/', verifyToken, async(req,res) => {
     try{
@@ -16,7 +17,7 @@ router.get('/', verifyToken, async(req,res) => {
     }
     })
 
-// 1b: GET by ID
+// 1b: GET single post by ID
 router.get('/:postId', verifyToken, async(req,res)=>{
     try{
         const getPostById = await Post.findById(req.params.postId)
@@ -26,13 +27,24 @@ router.get('/:postId', verifyToken, async(req,res)=>{
     }
 })
 
+// 1c: GET all posts by a user
+router.get('/:postId', verifyToken, async(req,res)=>{
+    try{
+        const userPosts = await Post.find({'user':req.user._id})
+        res.send(userPosts)
+    }catch(err){
+        res.status(400).send({message:err})
+    }
+})
 
 // 2: POST new post
 router.post('/', verifyToken, async(req,res)=> {
 // Inserting data
+
 const post = new Post({
+    user:req.user._id,
     title:req.body.title,
-    owner:req.user._id,
+    content:req.body.content,
     description:req.body.description
 })
 try {
