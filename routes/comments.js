@@ -18,9 +18,9 @@ router.get('/', verifyToken, async(req,res)=>{
 
 // GET by postID: show all comments for a specific post by postID - DOESN'T WORK
 router.get('/:postId', verifyToken, async(req,res)=>{
-    const postId = req.params._id
+    const postId = req.params.postId
     try{
-        const result = await Comment.find({'post':postId}).populate('content')
+        const result = await Comment.find({post:postId}).populate('content')
         res.send(result)
     }catch(err){
         res.status(400).send({message:err})
@@ -51,12 +51,28 @@ router.post('/:postId', verifyToken, async(req,res)=> {
 
 
 // PATCH by ID: update a comment by commentID
+router.patch('/:commentId', verifyToken, async(req,res)=>{
+    try{
+    const updateCommentById = await Comment.updateOne(
+        {_id:req.params.commentId},
+        {$set:{
+            content:req.body.content
+        }
+    })
+    res.send(updateCommentById)
+
+}catch(err){
+    res.send({message:err})
+}
+})
 
 // DELETE by ID: delete a comment by commentID
-router.delete('/', verifyToken, async(req,res)=>{
+router.delete('/:commentId', verifyToken, async(req,res)=>{
     try{
-    const comments = await Comment.deleteMany()
-    res.send(comments)
+    const deleteCommentById = await Comment.deleteOne(
+    {_id:req.params.commentId}
+    )
+    res.send(deleteCommentById)
     }catch(err){
     res.send({message:err})
     }
