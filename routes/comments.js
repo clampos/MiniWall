@@ -6,7 +6,7 @@ const Comment = require('../models/Comment')
 const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// GET all comments
+// GET all comments - WORKS
 router.get('/', verifyToken, async(req,res)=>{
     try{
         const getComments = await Comment.find().sort({timestamp:-1})
@@ -16,7 +16,7 @@ router.get('/', verifyToken, async(req,res)=>{
     }
 })
 
-// GET by postID: show all comments for a specific post by postID
+// GET by postID: show all comments for a specific post by postID - DOESN'T WORK
 router.get('/:postId', verifyToken, async(req,res)=>{
     const postId = req.params._id
     try{
@@ -27,7 +27,7 @@ router.get('/:postId', verifyToken, async(req,res)=>{
     }
 })
 
-// POST by ID: comment a specific post by postID
+// POST by ID: comment a specific post by postID - WORKS
 router.post('/:postId', verifyToken, async(req,res)=> {
     const postId = req.params._id
     // Inserting data

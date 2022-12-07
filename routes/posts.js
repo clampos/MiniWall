@@ -5,39 +5,38 @@ const Post = require('../models/Post')
 const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// 1a: GET all posts
+// 1a: GET all posts - WORKS
 // verifyToken protects posts data from unauthorised users
 router.get('/', verifyToken, async(req,res) => {
     try{
         // Await posts, sort by likes descending, then by chronological order if likes are equal
-        const posts = await Post.find().sort({timestamp:-1})
+        const posts = await Post.find().sort({likes:-1, timestamp:-1}).populate('user').populate('comments')
         res.send(posts)
     } catch(err) {
         res.status(400).send({message:err})
     }
     })
 
-// 1b: GET single post by ID
-router.get('/:postId', verifyToken, async(req,res)=>{
+// 1b: GET single post by ID - WORKS
+router.get('/postbyid/:postId', verifyToken, async(req,res)=>{
     try{
         const getPostById = await Post.findById(req.params.postId)
         res.send(getPostById)
     }catch(err){
         res.status(400).send({message:err})
-    }
-})
-
-// 1c: GET all posts by a user
-router.get('/:postId', verifyToken, async(req,res)=>{
+    }})
+  
+// 1c: GET all posts by a user - DOESN'T WORK
+router.get('/userposts/:userId', verifyToken, async(req,res)=>{
     try{
-        const userPosts = await Post.find({'user':req.user._id})
+        const userPosts = await Post.find({user:req.params.userId}).sort({timestamp:-1}).populate('comments')
         res.send(userPosts)
     }catch(err){
         res.status(400).send({message:err})
     }
 })
 
-// 2: POST new post
+// 2: POST new post - WORKS
 router.post('/', verifyToken, async(req,res)=> {
 // Inserting data
 
@@ -55,14 +54,14 @@ try {
 }
 })
 
-// 3: UPDATE/PATCH an existing post
+// 3: UPDATE/PATCH an existing post - WORKS
 router.patch('/:postId', verifyToken, async(req,res)=>{
     try{
     const updatePostById = await Post.updateOne(
         {_id:req.params.postId},
         {$set:{
             title:req.body.title,
-            description:req.body.description
+            content:req.body.content
         }
     })
     res.send(updatePostById)
@@ -72,7 +71,7 @@ router.patch('/:postId', verifyToken, async(req,res)=>{
 }
 })
 
-// 4a: DELETE all posts
+// 4a: DELETE all posts - WORKS
 router.delete('/', verifyToken, async(req,res)=>{
     try{
     const posts = await Post.deleteMany()
@@ -82,7 +81,7 @@ router.delete('/', verifyToken, async(req,res)=>{
     }
     })
 
-// 4b: DELETE a post by postId
+// 4b: DELETE a post by postId - WORKS
 router.delete('/:postId', verifyToken, async(req,res)=>{
 try{
 const deletePostById = await Post.deleteOne(

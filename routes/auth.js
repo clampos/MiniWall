@@ -7,7 +7,7 @@ const {registerAuthentication, loginAuthentication} = require('../authentication
 const bcryptjs = require('bcryptjs')
 const jsonwebtoken = require('jsonwebtoken')
 
-// POST: register a new user
+// POST: register a new user - WORKS
 router.post('/register', async(req,res) => {
     console.log(req.body)
 
@@ -47,7 +47,7 @@ router.post('/register', async(req,res) => {
     }
 })
 
-// POST: login an existing user
+// POST: login an existing user - WORKS
 router.post('/login', async(req,res) => {
     // Authentication 1 to check user input
     const {error} = loginAuthentication(req.body)
@@ -71,9 +71,5 @@ router.post('/login', async(req,res) => {
     const token = jsonwebtoken.sign({_id:user._id}, process.env.TOKEN_SECRET)
     res.header('auth-token', token).send({'auth-token': token})
 })
-
-// Delete an existing user
-
-
 
 module.exports = router
