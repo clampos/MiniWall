@@ -48,6 +48,11 @@ const post = new Post({
 })
 try {
     const savedPost = await post.save()
+    await User.updateOne(
+        {_id:req.user._id},
+        {$push:{posts:savedPost._id}}
+      )
+
     res.send(savedPost)
 } catch(err) {
     res.status(400).send({message:err})

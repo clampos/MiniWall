@@ -30,7 +30,13 @@ router.get('/:postId', verifyToken, async(req,res)=>{
 // POST by ID: comment a specific post by postID - WORKS
 router.post('/:postId', verifyToken, async(req,res)=> {
     const postId = req.params._id
-    // Inserting data
+    // Author tries to comment own post
+    const post = await Post.findById(req.params.postId)
+    if (post.user == req.user._id) {
+      res.status(401).send("User cannot comment own post")
+    }
+    // Non-author tries to comment post
+    else {
      const comment = new Comment({
        user: req.user._id,
        content:req.body.content,
@@ -43,15 +49,25 @@ router.post('/:postId', verifyToken, async(req,res)=> {
       )
 
       res.send(newComment)
-      console.log(newComment.post)
      } catch(err) {
        res.status(400).send({message:err})
     }
-    })
+    }
+})
 
 
 // PATCH by ID: update a comment by commentID
 router.patch('/:commentId', verifyToken, async(req,res)=>{
+    // Non-author tries to update comment
+    const commentId = req.params._id
+    // Author tries to comment own post
+    const comment = await Comment.findById(req.params.commentId)
+    if (comment.user != req.user._id) {
+      res.status(401).send("User cannot update another's comment")
+    }
+    else {
+
+    // Author tries to update comment
     try{
     const updateCommentById = await Comment.updateOne(
         {_id:req.params.commentId},
@@ -63,8 +79,10 @@ router.patch('/:commentId', verifyToken, async(req,res)=>{
 
 }catch(err){
     res.send({message:err})
-}
-})
+            }
+        }       
+    }
+)
 
 // DELETE by ID: delete a comment by commentID
 router.delete('/:commentId', verifyToken, async(req,res)=>{
