@@ -10,7 +10,7 @@ router.patch('/:postId', verifyToken, async(req,res)=> {
     // Inserting data
     const post = await Post.findById(req.params.postId)
     if (post.user == req.user._id) {
-      res.status(401).send("User cannot like own post")
+      res.status(401).send("401 Error: User cannot like own post :(")
     }
     else {
     try{

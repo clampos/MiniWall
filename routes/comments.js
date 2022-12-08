@@ -20,7 +20,7 @@ router.get('/', verifyToken, async(req,res)=>{
 router.get('/:postId', verifyToken, async(req,res)=>{
     const postId = req.params.postId
     try{
-        const result = await Comment.find({post:postId}).populate('content')
+        const result = await Comment.find({post:postId}).sort({timestamp:-1}).populate('content')
         res.send(result)
     }catch(err){
         res.status(400).send({message:err})
@@ -33,7 +33,7 @@ router.post('/:postId', verifyToken, async(req,res)=> {
     // Author tries to comment own post
     const post = await Post.findById(req.params.postId)
     if (post.user == req.user._id) {
-      res.status(401).send("User cannot comment own post")
+      res.status(401).send("401 Error: User cannot comment own post :(")
     }
     // Non-author tries to comment post
     else {
