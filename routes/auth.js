@@ -8,6 +8,7 @@ const bcryptjs = require('bcryptjs')
 const jsonwebtoken = require('jsonwebtoken')
 
 // POST: register a new user - WORKS
+// Code reused with permission from auth.js in mini-film-auth at https://github.com/steliosot/cc.git
 router.post('/register', async(req,res) => {
     console.log(req.body)
 
@@ -48,6 +49,7 @@ router.post('/register', async(req,res) => {
 })
 
 // POST: login an existing user - WORKS
+// Code reused with permission from auth.js in mini-film-auth at https://github.com/steliosot/cc.git
 router.post('/login', async(req,res) => {
     // Authentication 1 to check user input
     const {error} = loginAuthentication(req.body)

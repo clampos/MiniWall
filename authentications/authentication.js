@@ -1,6 +1,7 @@
 const joi = require('joi')
 
 // Authentications for user registrations
+// Code reused with permission from validation.js in mini-film-auth at https://github.com/steliosot/cc.git
 const registerAuthentication = (data) => {
     const schemaAuthentication = joi.object({
         username:joi.string().required().min(4).max(256),
