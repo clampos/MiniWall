@@ -6,11 +6,11 @@ const Comment = require('../models/Comment')
 const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// 1a: GET all comments
-router.get('/', verifyToken, async(req,res)=>{
+// 1a: GET all comments by a user
+router.get('/usercomments/:userId', verifyToken, async(req,res)=>{
     try{
-        const getComments = await Comment.find().sort({timestamp:-1})
-        res.send(getComments)
+        const userComments = await Comment.find({user:req.params.userId}).sort({timestamp:-1})
+        res.send(userComments)
     }catch(err){
         res.status(400).send({message:err})
     }

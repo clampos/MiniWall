@@ -23,7 +23,7 @@ router.post('/register', async(req,res) => {
         return res.status(400).send({message:'An account with the same username already exists'})
     }
 
-    // Authentication 2 to check if user exists (email)
+    // Authentication 3 to check if user exists (email)
     const userExists_2 = await User.findOne({email:req.body.email})
     if(userExists_2) {
         return res.status(400).send({message:'An account is already registered to this email address'})

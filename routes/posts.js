@@ -43,8 +43,7 @@ router.post('/', verifyToken, async(req,res)=> {
 const post = new Post({
     user:req.user._id,
     title:req.body.title,
-    content:req.body.content,
-    description:req.body.description
+    content:req.body.content
 })
 try {
     const savedPost = await post.save()
