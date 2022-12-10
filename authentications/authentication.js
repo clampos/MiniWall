@@ -1,5 +1,6 @@
 const joi = require('joi')
 
+// Authentications for user registrations
 const registerAuthentication = (data) => {
     const schemaAuthentication = joi.object({
         username:joi.string().required().min(4).max(256),
@@ -9,6 +10,7 @@ const registerAuthentication = (data) => {
     return schemaAuthentication.validate(data)
 }
 
+// Authentications for user logins
 const loginAuthentication = (data) => {
     const schemaAuthentication = joi.object({
         email:joi.string().required().min(7).max(256).email(),

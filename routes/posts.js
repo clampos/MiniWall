@@ -5,7 +5,7 @@ const Post = require('../models/Post')
 const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// 1a: GET all posts - WORKS
+// 1a: GET all posts
 // verifyToken protects posts data from unauthorised users
 router.get('/', verifyToken, async(req,res) => {
     try{
@@ -17,7 +17,7 @@ router.get('/', verifyToken, async(req,res) => {
     }
     })
 
-// 1b: GET single post by ID - WORKS
+// 1b: GET single post by ID
 router.get('/postbyid/:postId', verifyToken, async(req,res)=>{
     try{
         const getPostById = await Post.findById(req.params.postId)
@@ -26,7 +26,7 @@ router.get('/postbyid/:postId', verifyToken, async(req,res)=>{
         res.status(400).send({message:err})
     }})
   
-// 1c: GET all posts by a user - DOESN'T WORK
+// 1c: GET all posts by a user
 router.get('/userposts/:userId', verifyToken, async(req,res)=>{
     try{
         const userPosts = await Post.find({user:req.params.userId}).sort({timestamp:-1}).populate('comments')
@@ -36,7 +36,7 @@ router.get('/userposts/:userId', verifyToken, async(req,res)=>{
     }
 })
 
-// 2: POST new post - WORKS
+// 2: POST new post
 router.post('/', verifyToken, async(req,res)=> {
 // Inserting data
 
@@ -59,8 +59,17 @@ try {
 }
 })
 
-// 3: UPDATE/PATCH an existing post - WORKS
+// 3: UPDATE/PATCH an existing post
 router.patch('/:postId', verifyToken, async(req,res)=>{
+    // Non-author tries to update post
+    const postId = req.params._id
+    const post = await Post.findById(req.params.postId)
+    if (post.user != req.user._id) {
+      res.status(401).send("401 Error: User cannot update another's post :(")
+    }
+    else {
+
+    // Author tries to update post
     try{
     const updatePostById = await Post.updateOne(
         {_id:req.params.postId},
@@ -74,20 +83,19 @@ router.patch('/:postId', verifyToken, async(req,res)=>{
 }catch(err){
     res.send({message:err})
 }
+}
 })
 
-// 4a: DELETE all posts - WORKS
-router.delete('/', verifyToken, async(req,res)=>{
-    try{
-    const posts = await Post.deleteMany()
-    res.send(posts)
-    }catch(err){
-    res.send({message:err})
-    }
-    })
-
-// 4b: DELETE a post by postId - WORKS
+// 4: DELETE a post by postId
 router.delete('/:postId', verifyToken, async(req,res)=>{
+// Non-author tries to delete post
+const postId = req.params._id
+const post = await Post.findById(req.params.postId)
+if (post.user != req.user._id) {
+    res.status(401).send("401 Error: User cannot delete another's post :(")
+}
+else {
+// Author tries to delete post
 try{
 const deletePostById = await Post.deleteOne(
 {_id:req.params.postId}
@@ -95,6 +103,7 @@ const deletePostById = await Post.deleteOne(
 res.send(deletePostById)
 }catch(err){
 res.send({message:err})
+}
 }
 })
 

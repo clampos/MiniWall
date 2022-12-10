@@ -6,7 +6,7 @@ const Comment = require('../models/Comment')
 const User = require('../models/User')
 const verifyToken = require('../tokenVerification')
 
-// GET all comments - WORKS
+// 1a: GET all comments
 router.get('/', verifyToken, async(req,res)=>{
     try{
         const getComments = await Comment.find().sort({timestamp:-1})
@@ -16,7 +16,7 @@ router.get('/', verifyToken, async(req,res)=>{
     }
 })
 
-// GET by postID: show all comments for a specific post by postID - DOESN'T WORK
+// 1b: GET by postID: show all comments for a specific post by postID
 router.get('/:postId', verifyToken, async(req,res)=>{
     const postId = req.params.postId
     try{
@@ -27,7 +27,7 @@ router.get('/:postId', verifyToken, async(req,res)=>{
     }
 })
 
-// POST by ID: comment a specific post by postID - WORKS
+// 2: POST by ID: comment a specific post by postID
 router.post('/:postId', verifyToken, async(req,res)=> {
     const postId = req.params._id
     // Author tries to comment own post
@@ -56,14 +56,13 @@ router.post('/:postId', verifyToken, async(req,res)=> {
 })
 
 
-// PATCH by ID: update a comment by commentID
+// 3: PATCH by ID: update a comment by commentID
 router.patch('/:commentId', verifyToken, async(req,res)=>{
     // Non-author tries to update comment
     const commentId = req.params._id
-    // Author tries to comment own post
     const comment = await Comment.findById(req.params.commentId)
     if (comment.user != req.user._id) {
-      res.status(401).send("User cannot update another's comment")
+      res.status(401).send("401 Error: User cannot update another's comment :(")
     }
     else {
 
@@ -84,8 +83,17 @@ router.patch('/:commentId', verifyToken, async(req,res)=>{
     }
 )
 
-// DELETE by ID: delete a comment by commentID
+// 4: DELETE by ID: delete a comment by commentID
+
 router.delete('/:commentId', verifyToken, async(req,res)=>{
+// Non-author tries to delete comment
+const commentId = req.params._id
+const comment = await Comment.findById(req.params.commentId)
+if (comment.user != req.user._id) {
+    res.status(401).send("401 Error: User cannot delete another's comment :(")
+}
+else {
+// Author tries to delete comment
     try{
     const deleteCommentById = await Comment.deleteOne(
     {_id:req.params.commentId}
@@ -94,6 +102,7 @@ router.delete('/:commentId', verifyToken, async(req,res)=>{
     }catch(err){
     res.send({message:err})
     }
-    })
+    }
+})
 
 module.exports = router

@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to MiniWall RESTful API')
 })
 
-// TO-DO routes
+// Routes
 const postsRoute = require('./routes/posts')
 const authRoute = require('./routes/auth')
 const commentsRoute = require('./routes/comments')

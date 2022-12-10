@@ -7,11 +7,13 @@ const verifyToken = require('../tokenVerification')
 
 // PATCH like by ID: like a specific post by postID - WORKS
 router.patch('/:postId', verifyToken, async(req,res)=> {
-    // Inserting data
+    // Author tries to like own post
     const post = await Post.findById(req.params.postId)
     if (post.user == req.user._id) {
       res.status(401).send("401 Error: User cannot like own post :(")
     }
+
+    // Non-author tries to like post
     else {
     try{
       const likedPost = await Post.updateOne(
